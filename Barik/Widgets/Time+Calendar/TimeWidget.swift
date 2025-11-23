@@ -8,6 +8,7 @@ struct TimeWidget: View {
 
     var format: String { config["format"]?.stringValue ?? "E d, J:mm" }
     var timeZone: String? { config["time-zone"]?.stringValue }
+    var label: String? { config["label"]?.stringValue }
 
     var calendarFormat: String {
         calendarConfig?["format"]?.stringValue ?? "J:mm"
@@ -26,8 +27,14 @@ struct TimeWidget: View {
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
-            Text(formattedTime(pattern: format, from: currentTime))
-                .fontWeight(.semibold)
+            HStack(spacing: 4) {
+                if let label = label {
+                    Text(label)
+                        .opacity(0.6)
+                }
+                Text(formattedTime(pattern: format, from: currentTime))
+                    .fontWeight(.semibold)
+            }
             if let event = calendarManager.nextEvent, calendarShowEvents {
                 Text(eventText(for: event))
                     .opacity(0.8)

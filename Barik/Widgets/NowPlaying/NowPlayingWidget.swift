@@ -248,14 +248,15 @@ struct ScrollingText: View {
                 }
                 .fixedSize()
                 .offset(x: offset)
+                .frame(width: maxWidth, alignment: .leading)
             } else {
                 Text(text)
                     .font(font)
                     .fontWeight(fontWeight)
                     .lineLimit(1)
+                    .fixedSize()
             }
         }
-        .frame(maxWidth: maxWidth, alignment: .leading)
         .clipped()
         .opacity(opacity)
         .onChange(of: text) { _, _ in

@@ -34,6 +34,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func screenParametersDidChange(_ notification: Notification) {
         setupPanels()
+        MenuBarPopup.updateFrame()
     }
 
     /// Configures and displays the background and menu bar panels.

@@ -131,4 +131,15 @@ class MenuBarPopup {
 
         panel = newPanel
     }
+
+    static func updateFrame() {
+        guard let screen = NSScreen.main?.visibleFrame else { return }
+        let panelFrame = NSRect(
+            x: 0,
+            y: 0,
+            width: screen.size.width,
+            height: screen.size.height
+        )
+        panel?.setFrame(panelFrame, display: true)
+    }
 }

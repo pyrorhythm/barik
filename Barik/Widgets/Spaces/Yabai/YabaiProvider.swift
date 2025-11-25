@@ -54,7 +54,27 @@ class YabaiSpacesProvider: SpacesProvider, SwitchableSpacesProvider {
     }
 
     func getSpacesWithWindows() -> [YabaiSpace]? {
-        guard let spaces = fetchSpaces(), let windows = fetchWindows() else {
+        // Run both queries in parallel for faster response
+        var spaces: [YabaiSpace]?
+        var windows: [YabaiWindow]?
+
+        let group = DispatchGroup()
+
+        group.enter()
+        DispatchQueue.global(qos: .userInteractive).async {
+            spaces = self.fetchSpaces()
+            group.leave()
+        }
+
+        group.enter()
+        DispatchQueue.global(qos: .userInteractive).async {
+            windows = self.fetchWindows()
+            group.leave()
+        }
+
+        group.wait()
+
+        guard let spaces = spaces, let windows = windows else {
             return nil
         }
         let filteredWindows = windows.filter {

@@ -144,7 +144,7 @@ class SpacesViewModel: ObservableObject {
     }
 
     private func loadSpaces() {
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .userInteractive).async {
             guard let provider = self.provider,
                 let spaces = provider.getSpacesWithWindows()
             else {

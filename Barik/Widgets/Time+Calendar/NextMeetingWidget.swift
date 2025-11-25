@@ -21,13 +21,24 @@ struct NextMeetingWidget: View {
     @ObservedObject var calendarManager: CalendarManager
 
     private var filteredMeeting: EKEvent? {
+        let meeting: EKEvent?
         if onlyMeetings {
             // Only show events with attendees or meeting links
-            return calendarManager.nextMeeting
+            meeting = calendarManager.nextMeeting
         } else {
             // Show any upcoming event
-            return calendarManager.nextEvent
+            meeting = calendarManager.nextEvent
         }
+
+        // Hide meeting if it started more than 5 minutes ago
+        if let meeting = meeting {
+            let minutesSinceStart = Date().timeIntervalSince(meeting.startDate) / 60
+            if minutesSinceStart > 5 {
+                return nil
+            }
+        }
+
+        return meeting
     }
 
     var body: some View {
@@ -62,13 +73,23 @@ struct NextMeetingWidget: View {
         let now = Date()
         let interval = date.timeIntervalSince(now)
 
+        // Meeting has started - show "started Xm ago"
         if interval <= 0 {
-            return "now"
+            let minutesAgo = Int(-interval / 60)
+            if minutesAgo == 0 {
+                return "now"
+            }
+            return "started \(minutesAgo)m ago"
         }
 
         let minutes = Int(interval / 60)
         let hours = minutes / 60
         let remainingMinutes = minutes % 60
+
+        // Last minute - show "now" instead of "in 0 min"
+        if minutes == 0 {
+            return "now"
+        }
 
         if hours > 0 {
             if remainingMinutes > 0 {

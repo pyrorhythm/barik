@@ -120,7 +120,13 @@ class CalendarManager: ObservableObject {
     private func isMeeting(_ event: EKEvent) -> Bool {
         let hasAttendees = (event.attendees?.count ?? 0) > 0
         let hasMeetingURL = containsMeetingURL(event)
-        return hasAttendees || hasMeetingURL
+        let hasOrganizer = event.organizer != nil && !event.organizer!.isCurrentUser
+
+        // Consider it a meeting if:
+        // - Has attendees (you invited others), OR
+        // - Has a meeting URL, OR
+        // - Has an organizer who isn't you (someone invited you)
+        return hasAttendees || hasMeetingURL || hasOrganizer
     }
 
     func fetchNextEvent() {
@@ -151,6 +157,8 @@ class CalendarManager: ObservableObject {
         let calendars = eventStore.calendars(for: .event)
         let now = Date()
         let calendar = Calendar.current
+        // Start from 30 minutes ago to catch meetings that recently started
+        let startTime = calendar.date(byAdding: .minute, value: -30, to: now) ?? now
         guard
             let endOfDay = calendar.date(
                 bySettingHour: 23, minute: 59, second: 59, of: now)
@@ -159,13 +167,19 @@ class CalendarManager: ObservableObject {
             return
         }
         let predicate = eventStore.predicateForEvents(
-            withStart: now, end: endOfDay, calendars: calendars)
+            withStart: startTime, end: endOfDay, calendars: calendars)
         let events = eventStore.events(matching: predicate).sorted {
             $0.startDate < $1.startDate
         }
         let filteredEvents = filterEvents(events)
-        let meetings = filteredEvents.filter { !$0.isAllDay && isMeeting($0) }
-        let next = meetings.first
+        // Filter: not all-day, is a meeting, and either hasn't started or started within last 30 mins
+        let meetings = filteredEvents.filter { event in
+            guard !event.isAllDay && isMeeting(event) else { return false }
+            // Include if: hasn't ended yet AND (hasn't started OR started recently)
+            return event.endDate > now
+        }
+        // Get first upcoming or currently running meeting
+        let next = meetings.first { $0.startDate > now } ?? meetings.first
         DispatchQueue.main.async {
             self.nextMeeting = next
         }

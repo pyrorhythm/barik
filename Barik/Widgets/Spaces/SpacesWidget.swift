@@ -81,6 +81,7 @@ private struct SpaceView: View {
 private struct WindowView: View {
     @EnvironmentObject var configProvider: ConfigProvider
     @EnvironmentObject var viewModel: SpacesViewModel
+    @ObservedObject var displayManager = DisplayManager.shared
 
     var config: ConfigData { configProvider.config }
     var windowConfig: ConfigData { config["window"]?.dictionaryValue ?? [:] }
@@ -96,6 +97,11 @@ private struct WindowView: View {
     let space: AnySpace
 
     @State var isHovered = false
+
+    // Hide titles on notched displays to prevent overflow
+    var effectiveShowTitle: Bool {
+        showTitle && !displayManager.hasNotch
+    }
 
     var body: some View {
         let titleMaxLength = maxLength
@@ -123,7 +129,7 @@ private struct WindowView: View {
             .opacity(spaceIsFocused && !window.isFocused ? 0.5 : 1)
             .transition(.blurReplace)
 
-            if window.isFocused, !title.isEmpty, showTitle {
+            if window.isFocused, !title.isEmpty, effectiveShowTitle {
                 HStack {
                     Text(
                         title.count > titleMaxLength
@@ -139,7 +145,7 @@ private struct WindowView: View {
             }
         }
         .padding(.all, 2)
-        .background(isHovered || (!showTitle && window.isFocused) ? .selected : .clear)
+        .background(isHovered || (!effectiveShowTitle && window.isFocused) ? .selected : .clear)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .animation(.smooth, value: isHovered)
         .frame(height: 30)

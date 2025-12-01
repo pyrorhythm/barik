@@ -53,10 +53,10 @@ final class DisplayManager: ObservableObject {
             newHasNotch = safeArea.top > 0
 
             if newHasNotch {
-                // The MacBook Pro notch is ~200pt wide, centered at the top
-                // The spacer needs to be wide enough to keep left/right content
-                // from going under the notch. We use ~220pt to provide some margin.
-                newNotchSpacerWidth = 220
+                // For now, don't force a minimum spacer width
+                // The spacer naturally expands to fill available space
+                // TODO: Consider limiting SpacesWidget max width on notched displays instead
+                newNotchSpacerWidth = 0
             }
         }
 

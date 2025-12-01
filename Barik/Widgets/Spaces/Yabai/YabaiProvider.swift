@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 
 class YabaiSpacesProvider: SpacesProvider, SwitchableSpacesProvider {
@@ -77,8 +78,23 @@ class YabaiSpacesProvider: SpacesProvider, SwitchableSpacesProvider {
         guard let spaces = spaces, let windows = windows else {
             return nil
         }
-        let filteredWindows = windows.filter {
-            $0.opacity > 0 && !($0.isHidden || $0.isSticky || ($0.isFloating && $0.title.trimmingCharacters(in: .whitespaces).isEmpty))
+        // Exclude apps that don't show in the Dock (accessory/background apps like Hammerspoon, Raycast, etc.)
+        // These apps keep windows alive even when "closed", so yabai can't detect their actual visibility
+        let accessoryApps = Set(
+            NSWorkspace.shared.runningApplications
+                .filter { $0.activationPolicy != .regular }
+                .compactMap { $0.localizedName }
+        )
+
+        let filteredWindows = windows.filter { window in
+            // Basic filters
+            guard window.opacity > 0 && !window.isHidden && !window.isSticky else { return false }
+            guard !(window.isFloating && window.title.trimmingCharacters(in: .whitespaces).isEmpty) else { return false }
+
+            // Exclude accessory/background apps entirely
+            if accessoryApps.contains(window.appName ?? "") { return false }
+
+            return true
         }
         var spaceDict = Dictionary(
             uniqueKeysWithValues: spaces.map { ($0.id, $0) })

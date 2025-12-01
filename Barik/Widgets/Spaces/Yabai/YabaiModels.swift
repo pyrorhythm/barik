@@ -8,6 +8,7 @@ struct YabaiWindow: WindowModel {
     let stackIndex: Int
     var appIcon: NSImage?
     let isHidden: Bool
+    let isVisible: Bool
     let isFloating: Bool
     let isSticky: Bool
     let opacity: Float
@@ -21,6 +22,7 @@ struct YabaiWindow: WindowModel {
         case isFocused = "has-focus"
         case stackIndex = "stack-index"
         case isHidden = "is-hidden"
+        case isVisible = "is-visible"
         case isFloating = "is-floating"
         case isSticky = "is-sticky"
         case opacity
@@ -38,6 +40,7 @@ struct YabaiWindow: WindowModel {
         stackIndex =
             try container.decodeIfPresent(Int.self, forKey: .stackIndex) ?? 0
         isHidden = try container.decode(Bool.self, forKey: .isHidden)
+        isVisible = try container.decode(Bool.self, forKey: .isVisible)
         isFloating = try container.decode(Bool.self, forKey: .isFloating)
         isSticky = try container.decode(Bool.self, forKey: .isSticky)
         opacity = try container.decode(Float.self, forKey: .opacity)

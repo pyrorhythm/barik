@@ -7,6 +7,7 @@ struct SystemWidget: View {
             .font(.system(size: 15))
             .foregroundStyle(.foregroundOutside)
             .shadow(color: .foregroundShadowOutside, radius: 3)
+            .offset(y: -1)
             .contentShape(Rectangle())
             .experimentalConfiguration(cornerRadius: 15)
             .frame(maxHeight: .infinity)

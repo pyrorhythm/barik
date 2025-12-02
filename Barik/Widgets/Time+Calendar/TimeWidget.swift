@@ -37,7 +37,7 @@ struct TimeWidget: View {
                         .opacity(0.6)
                 }
                 Text(formattedTime(pattern: format, from: currentTime))
-                    .fontWeight(.semibold)
+                    .fontWeight(.medium)
             }
             if let event = calendarManager.nextEvent, calendarShowEvents {
                 Text(eventText(for: event))
@@ -45,7 +45,7 @@ struct TimeWidget: View {
                     .font(.subheadline)
             }
         }
-        .font(.headline)
+        .font(.system(size: 13))
         .foregroundStyle(.foregroundOutside)
         .shadow(color: .foregroundShadowOutside, radius: 3)
         .onReceive(timer) { date in

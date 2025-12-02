@@ -115,7 +115,7 @@ private struct BatteryText: View {
         .foregroundStyle(
             showPercentage ? .foregroundOutsideInvert : .foregroundOutside
         )
-        .fontWeight(.semibold)
+        .fontWeight(.medium)
         .transition(.blurReplace)
         .animation(.smooth, value: isCharging)
         .frame(width: 26, height: 15)

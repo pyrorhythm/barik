@@ -82,7 +82,7 @@ struct MenuBarView: View {
 
         case "divider":
             Rectangle()
-                .fill(Color.active)
+                .fill(Color.foregroundOutside.opacity(0.5))
                 .frame(width: 2, height: 15)
                 .clipShape(Capsule())
 

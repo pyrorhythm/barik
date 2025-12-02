@@ -7,7 +7,7 @@ struct SpacesWidget: View {
     var foregroundHeight: CGFloat { configManager.config.experimental.foreground.resolveHeight() }
 
     var body: some View {
-        HStack(spacing: foregroundHeight < 30 ? 0 : 8) {
+        HStack(spacing: foregroundHeight < 30 ? 0 : 4) {
             ForEach(viewModel.spaces) { space in
                 SpaceView(space: space)
             }
@@ -39,20 +39,20 @@ private struct SpaceView: View {
     var body: some View {
         let isFocused = space.windows.contains { $0.isFocused } || space.isFocused
         HStack(spacing: 0) {
-            Spacer().frame(width: 10)
+            Spacer().frame(width: 6)
             if showKey {
                 Text(space.id)
-                    .font(.headline)
+                    .font(.system(size: 13, weight: .medium))
                     .frame(minWidth: 15)
                     .fixedSize(horizontal: true, vertical: false)
-                Spacer().frame(width: 5)
+                Spacer().frame(width: 4)
             }
             HStack(spacing: 2) {
                 ForEach(space.windows) { window in
                     WindowView(window: window, space: space)
                 }
             }
-            Spacer().frame(width: 10)
+            Spacer().frame(width: 6)
         }
         .frame(height: 30)
         .background(
@@ -138,7 +138,7 @@ private struct WindowView: View {
                     )
                     .fixedSize(horizontal: true, vertical: false)
                     .shadow(color: .foregroundShadow, radius: 3)
-                    .fontWeight(.semibold)
+                    .fontWeight(.medium)
                     Spacer().frame(width: 5)
                 }
                 .transition(.blurReplace)

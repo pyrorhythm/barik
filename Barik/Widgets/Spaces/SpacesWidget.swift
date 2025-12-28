@@ -55,10 +55,8 @@ private struct SpaceView: View {
             Spacer().frame(width: 6)
         }
         .frame(height: 30)
-        .glassEffect(
-            isFocused ? .regular.tint(.accentColor) : .regular,
-            in: .rect(cornerRadius: 8, style: .continuous)
-        )
+        .glassEffect(in: .rect(cornerRadius: 8, style: .continuous))
+        .tint(isFocused ? .accentColor : nil)
         .transition(.blurReplace)
         .onTapGesture {
             viewModel.switchToSpace(space, needWindowFocus: true)

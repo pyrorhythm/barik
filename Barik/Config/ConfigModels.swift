@@ -297,12 +297,14 @@ struct ExperimentalConfig: Decodable {
 struct ForegroundConfig: Decodable {
     let height: BackgroundForegroundHeight
     let horizontalPadding: CGFloat
+    let verticalPadding: CGFloat
     let widgetsBackground: WidgetBackgroundConfig
     let spacing: CGFloat
     
     init() {
         self.height = .barikDefault
         self.horizontalPadding = Constants.menuBarHorizontalPadding
+        self.verticalPadding = 0
         self.widgetsBackground = WidgetBackgroundConfig()
         self.spacing = 15
     }
@@ -311,6 +313,7 @@ struct ForegroundConfig: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         height = try container.decodeIfPresent(BackgroundForegroundHeight.self, forKey: .height) ?? .barikDefault
         horizontalPadding = try container.decodeIfPresent(CGFloat.self, forKey: .horizontalPadding) ?? Constants.menuBarHorizontalPadding
+        verticalPadding = try container.decodeIfPresent(CGFloat.self, forKey: .verticalPadding) ?? 0
         widgetsBackground = try container.decodeIfPresent(WidgetBackgroundConfig.self, forKey: .widgetsBackground) ?? WidgetBackgroundConfig()
         spacing = try container.decodeIfPresent(CGFloat.self, forKey: .spacing) ?? 15
     }
@@ -318,6 +321,7 @@ struct ForegroundConfig: Decodable {
     enum CodingKeys: String, CodingKey {
         case height
         case horizontalPadding = "horizontal-padding"
+        case verticalPadding = "vertical-padding"
         case widgetsBackground = "widgets-background"
         case spacing
     }

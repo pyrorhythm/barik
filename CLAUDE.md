@@ -228,16 +228,6 @@ NotificationCenter.default.addObserver(
 - Vertical and horizontal popup variants
 - Graceful fallback when Spotify not running
 
-### Telegram Widget (`Widgets/Telegram/`)
-- Monitors Telegram Desktop (cross-platform Qt/C++ client) dock badge for unread count
-- Uses Accessibility APIs (AXUIElement) to read dock badge label
-- Requires accessibility permissions to be granted to Barik
-- 10s polling interval with sleep/wake optimization
-- Color-coded states: green (no unread), orange (1-9), red (10+)
-- Works with both Telegram Desktop (`com.tdesktop.Telegram`) and native macOS Telegram (`ru.keepcoder.Telegram`)
-- Opens Telegram via app activation or URL scheme
-- Note: Direct database access not used due to Telegram Desktop's encrypted tdata format
-
 ### Caffeinate Widget (`Widgets/Caffeinate/`)
 - Uses IOKit power assertions (`kIOPMAssertionTypePreventUserIdleSystemSleep`)
 - Allows display sleep while preventing system sleep

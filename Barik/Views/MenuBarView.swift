@@ -53,8 +53,8 @@ struct MenuBarView: View {
             }
         }
         .foregroundStyle(Color.foregroundOutside)
-        .frame(height: max(configManager.config.experimental.foreground.resolveHeight(), 1.0))
         .frame(maxWidth: .infinity)
+        .frame(height: max(configManager.config.experimental.foreground.resolveHeight(), 1.0) + (configManager.config.experimental.foreground.verticalPadding * 2), alignment: .top)
         .padding(.horizontal, configManager.config.experimental.foreground.horizontalPadding)
         .background(.black.opacity(0.001))
         .preferredColorScheme(theme)
@@ -71,29 +71,40 @@ struct MenuBarView: View {
 
     @ViewBuilder
     private var splitPillsLayout: some View {
+        let pillHeight = configManager.config.experimental.foreground.resolveHeight()
+        let verticalPadding = configManager.config.experimental.foreground.verticalPadding
+        
         // Left pill
-        HStack(spacing: configManager.config.experimental.foreground.spacing) {
-            ForEach(0..<leftItems.count, id: \.self) { index in
-                buildView(for: leftItems[index])
+        VStack {
+            Spacer().frame(height: verticalPadding)
+            HStack(spacing: configManager.config.experimental.foreground.spacing) {
+                ForEach(0..<leftItems.count, id: \.self) { index in
+                    buildView(for: leftItems[index])
+                }
             }
+            .frame(height: pillHeight)
+            .padding(.horizontal, 12)
+            .glassEffect(in: .rect(cornerRadius: 18, style: .continuous))
+            Spacer().frame(height: verticalPadding)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
-        .glassEffect(.regular, in: .rect(cornerRadius: 18, style: .continuous))
 
         // Spacer in the middle (notch area)
         let minWidth = max(50, displayManager.notchSpacerWidth)
         Spacer().frame(minWidth: minWidth, maxWidth: .infinity)
 
         // Right pill
-        HStack(spacing: configManager.config.experimental.foreground.spacing) {
-            ForEach(0..<rightItems.count, id: \.self) { index in
-                buildView(for: rightItems[index])
+        VStack {
+            Spacer().frame(height: verticalPadding)
+            HStack(spacing: configManager.config.experimental.foreground.spacing) {
+                ForEach(0..<rightItems.count, id: \.self) { index in
+                    buildView(for: rightItems[index])
+                }
             }
+            .frame(height: pillHeight)
+            .padding(.horizontal, 12)
+            .glassEffect(in: .rect(cornerRadius: 18, style: .continuous))
+            Spacer().frame(height: verticalPadding)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
-        .glassEffect(.regular, in: .rect(cornerRadius: 18, style: .continuous))
     }
 
     @ViewBuilder

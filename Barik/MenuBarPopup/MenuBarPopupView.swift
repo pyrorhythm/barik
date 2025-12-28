@@ -32,7 +32,7 @@ struct MenuBarPopupView<Content: View>: View {
     var body: some View {
         ZStack(alignment: .topTrailing) {
             content
-                .glassEffect(.regular, in: .rect(cornerRadius: 40, style: .continuous))
+                .glassEffect(in: .rect(cornerRadius: 40, style: .continuous))
                 .padding(.top, foregroundHeight + 5)
                 .offset(x: computedOffset, y: computedYOffset)
                 .blur(radius: (1.0 - (0.1 + 0.9 * animationValue)) * 20)

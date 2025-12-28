@@ -12,10 +12,14 @@ private struct ExperimentalConfigurationModifier: ViewModifier {
         Group {
             switch backgroundStyle {
             case .widgetPills:
-                content
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
-                    .glassEffect(.regular, in: .rect(cornerRadius: cornerRadius, style: .continuous))
+                VStack {
+                    Spacer().frame(height: configManager.config.experimental.foreground.verticalPadding)
+                    content
+                        .frame(height: foregroundHeight)
+                        .padding(.horizontal, 10)
+                        .glassEffect(in: .rect(cornerRadius: cornerRadius, style: .continuous))
+                    Spacer().frame(height: configManager.config.experimental.foreground.verticalPadding)
+                }
 
             case .splitPills, .none:
                 content

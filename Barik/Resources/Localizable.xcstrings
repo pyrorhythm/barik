@@ -4,8 +4,14 @@
     "?%@?" : {
       "shouldTranslate" : false
     },
+    "·" : {
+
+    },
     "%lld" : {
       "shouldTranslate" : false
+    },
+    "%lld%%" : {
+
     },
     "ALL_DAY" : {
       "extractionState" : "manual",
@@ -629,6 +635,15 @@
         }
       }
     },
+    "Not Playing" : {
+
+    },
+    "Open Spotify to see playback controls" : {
+
+    },
+    "Output" : {
+
+    },
     "RSSI: %lld" : {
       "localizations" : {
         "ar" : {
@@ -876,6 +891,12 @@
           }
         }
       }
+    },
+    "Spotify" : {
+
+    },
+    "Spotify Not Running" : {
+
     },
     "TODAY" : {
       "extractionState" : "manual",

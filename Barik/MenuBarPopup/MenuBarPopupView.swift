@@ -32,11 +32,9 @@ struct MenuBarPopupView<Content: View>: View {
     var body: some View {
         ZStack(alignment: .topTrailing) {
             content
-                .background(Color.black)
-                .cornerRadius(((1.0 - animationValue) * 1) + 40)
+                .glassEffect(.regular, in: .rect(cornerRadius: 40, style: .continuous))
                 .padding(.top, foregroundHeight + 5)
                 .offset(x: computedOffset, y: computedYOffset)
-                .shadow(radius: 30)
                 .blur(radius: (1.0 - (0.1 + 0.9 * animationValue)) * 20)
                 .scaleEffect(x: 0.2 + 0.8 * animationValue, y: animationValue)
                 .opacity(animationValue)
@@ -131,8 +129,6 @@ struct MenuBarPopupView<Content: View>: View {
                     }
             }
         )
-        .foregroundStyle(.white)
-        .preferredColorScheme(.dark)
     }
 
     var computedOffset: CGFloat {

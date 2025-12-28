@@ -363,37 +363,46 @@ struct WidgetBackgroundConfig: Decodable {
     }
 }
 
+enum BackgroundStyle: String, Decodable {
+    case splitPills = "split-pills"
+    case widgetPills = "widget-pills"
+    case none = "none"
+}
+
 struct BackgroundConfig: Decodable {
     let displayed: Bool
     let height: BackgroundForegroundHeight
     let blur: Material
     let black: Bool
+    let style: BackgroundStyle
 
     init() {
         self.displayed = true
         self.height = .barikDefault
         self.blur = .regular
         self.black = false
+        self.style = .splitPills
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         displayed = try container.decodeIfPresent(Bool.self, forKey: .displayed) ?? true
         height = try container.decodeIfPresent(BackgroundForegroundHeight.self, forKey: .height) ?? .barikDefault
-        
+        style = try container.decodeIfPresent(BackgroundStyle.self, forKey: .style) ?? .splitPills
+
         var materialIndex = try container.decodeIfPresent(Int.self, forKey: .blur) ?? 1
         if materialIndex < 1 {
             materialIndex = 1
         } else if materialIndex > 7 {
             materialIndex = 7
         }
-        
+
         blur = [.ultraThin, .thin, .regular, .thick, .ultraThick, .bar, .bar][materialIndex - 1]
         self.black = materialIndex == 7
     }
 
     enum CodingKeys: String, CodingKey {
-        case displayed, height, blur
+        case displayed, height, blur, style
     }
 
     func resolveHeight() -> CGFloat? {

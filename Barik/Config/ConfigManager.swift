@@ -21,7 +21,9 @@ final class ConfigManager: ObservableObject {
         let path1 = "\(homePath)/.barik-config.toml"
         let path2 = "\(homePath)/.config/barik/config.toml"
         var chosenPath: String?
-
+        
+        print("choosing between \(path1) \(path2)")
+        
         if FileManager.default.fileExists(atPath: path1) {
             chosenPath = path1
         } else if FileManager.default.fileExists(atPath: path2) {
@@ -36,7 +38,9 @@ final class ConfigManager: ObservableObject {
                 return
             }
         }
-
+        
+        print("CFG: Chose \(chosenPath), loading")
+        
         if let path = chosenPath {
             configFilePath = path
             parseConfigFile(at: path)

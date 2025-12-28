@@ -3,26 +3,22 @@ import SwiftUI
 private struct ExperimentalConfigurationModifier: ViewModifier {
     @ObservedObject var configManager = ConfigManager.shared
     var foregroundHeight: CGFloat { configManager.config.experimental.foreground.resolveHeight() }
-    
+    var backgroundStyle: BackgroundStyle { configManager.config.experimental.background.style }
+
     let horizontalPadding: CGFloat
     let cornerRadius: CGFloat
-    
+
     func body(content: Content) -> some View {
         Group {
-            if !configManager.config.experimental.foreground.widgetsBackground.displayed {
+            switch backgroundStyle {
+            case .widgetPills:
                 content
-            } else {
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .glassEffect(.regular, in: .rect(cornerRadius: cornerRadius, style: .continuous))
+
+            case .splitPills, .none:
                 content
-                    .frame(height: foregroundHeight < 45 ? 30 : 38)
-                    .padding(.horizontal, foregroundHeight < 45 && horizontalPadding != 15 ? 0 :
-                                foregroundHeight < 30 ? 0 : horizontalPadding
-                    )
-                    .background(configManager.config.experimental.foreground.widgetsBackground.blur)
-                    .cornerRadius(foregroundHeight < 30 ? 0 : cornerRadius)
-                    .overlay(
-                        foregroundHeight < 30 ? nil :
-                            RoundedRectangle(cornerRadius: cornerRadius).stroke(Color.noActive, lineWidth: 1)
-                    )
             }
         }.scaleEffect(foregroundHeight < 25 ? 0.9 : 1, anchor: .leading)
     }

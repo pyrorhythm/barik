@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>LSUIElement</key>
-	<true/>
+	<key>NSAccessibilityUsageDescription</key>
+	<string>Barik needs accessibility access to read dock badge labels for widgets like Telegram unread count.</string>
 </dict>
 </plist>

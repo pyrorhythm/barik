@@ -55,22 +55,16 @@ private struct SpaceView: View {
             Spacer().frame(width: 6)
         }
         .frame(height: 30)
-        .background(
-            foregroundHeight < 30 ?
-            (isFocused
-             ? Color.noActive
-             : Color.clear) :
-                (isFocused
-                 ? Color.active
-                 : isHovered ? Color.noActive : Color.noActive)
+        .glassEffect(
+            isFocused ? .regular.tint(.accentColor) : .regular,
+            in: .rect(cornerRadius: 8, style: .continuous)
         )
-        .clipShape(RoundedRectangle(cornerRadius: foregroundHeight < 30 ? 0 : 8, style: .continuous))
-        .shadow(color: .shadow, radius: foregroundHeight < 30 ? 0 : 2)
         .transition(.blurReplace)
         .onTapGesture {
             viewModel.switchToSpace(space, needWindowFocus: true)
         }
         .animation(.smooth, value: isHovered)
+        .animation(.smooth, value: isFocused)
         .onHover { value in
             isHovered = value
         }

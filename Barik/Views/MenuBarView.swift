@@ -4,29 +4,48 @@ struct MenuBarView: View {
     @ObservedObject var configManager = ConfigManager.shared
     @ObservedObject var displayManager = DisplayManager.shared
 
-    var body: some View {
-        let theme: ColorScheme? =
-            switch configManager.config.rootToml.theme {
-            case "dark":
-                .dark
-            case "light":
-                .light
-            default:
-                .none
-            }
+    private var theme: ColorScheme? {
+        switch configManager.config.rootToml.theme {
+        case "dark": return .dark
+        case "light": return .light
+        default: return nil
+        }
+    }
 
+    private var backgroundStyle: BackgroundStyle {
+        configManager.config.experimental.background.style
+    }
+
+    private var items: [TomlWidgetItem] {
         let allItems = configManager.config.rootToml.widgets.displayed
         let hiddenWidgets = displayManager.isBuiltinDisplay
             ? configManager.config.builtinDisplay.hiddenWidgets
             : []
-        let items = allItems.filter { !hiddenWidgets.contains($0.id) }
+        return allItems.filter { !hiddenWidgets.contains($0.id) }
+    }
 
+    private var spacerIndex: Int? {
+        items.firstIndex(where: { $0.id == "spacer" })
+    }
+
+    private var leftItems: [TomlWidgetItem] {
+        guard let idx = spacerIndex else { return items }
+        return Array(items.prefix(idx))
+    }
+
+    private var rightItems: [TomlWidgetItem] {
+        guard let idx = spacerIndex else { return [] }
+        return Array(items.suffix(from: idx + 1))
+    }
+
+    var body: some View {
         HStack(spacing: 0) {
-            HStack(spacing: configManager.config.experimental.foreground.spacing) {
-                ForEach(0..<items.count, id: \.self) { index in
-                    let item = items[index]
-                    buildView(for: item)
-                }
+            switch backgroundStyle {
+            case .splitPills:
+                splitPillsLayout
+
+            case .widgetPills, .none:
+                standardLayout
             }
 
             if !items.contains(where: { $0.id == "system-banner" }) {
@@ -39,6 +58,42 @@ struct MenuBarView: View {
         .padding(.horizontal, configManager.config.experimental.foreground.horizontalPadding)
         .background(.black.opacity(0.001))
         .preferredColorScheme(theme)
+    }
+
+    @ViewBuilder
+    private var standardLayout: some View {
+        HStack(spacing: configManager.config.experimental.foreground.spacing) {
+            ForEach(0..<items.count, id: \.self) { index in
+                buildView(for: items[index])
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var splitPillsLayout: some View {
+        // Left pill
+        HStack(spacing: configManager.config.experimental.foreground.spacing) {
+            ForEach(0..<leftItems.count, id: \.self) { index in
+                buildView(for: leftItems[index])
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .glassEffect(.regular, in: .rect(cornerRadius: 18, style: .continuous))
+
+        // Spacer in the middle (notch area)
+        let minWidth = max(50, displayManager.notchSpacerWidth)
+        Spacer().frame(minWidth: minWidth, maxWidth: .infinity)
+
+        // Right pill
+        HStack(spacing: configManager.config.experimental.foreground.spacing) {
+            ForEach(0..<rightItems.count, id: \.self) { index in
+                buildView(for: rightItems[index])
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .glassEffect(.regular, in: .rect(cornerRadius: 18, style: .continuous))
     }
 
     @ViewBuilder
@@ -71,16 +126,16 @@ struct MenuBarView: View {
             NowPlayingWidget()
                 .environmentObject(config)
 
+        case "default.spotify":
+            SpotifyWidget()
+                .environmentObject(config)
+
         case "default.audiooutput":
             AudioOutputWidget()
                 .environmentObject(config)
 
         case "default.caffeinate":
             CaffeinateWidget()
-                .environmentObject(config)
-
-        case "default.iterm":
-            ITermWidget()
                 .environmentObject(config)
 
         case "spacer":

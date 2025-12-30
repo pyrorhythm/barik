@@ -71,7 +71,7 @@ struct CalendarVerticalPopup: View {
     var body: some View {
         VStack(spacing: 0) {
             Text(currentMonthYear)
-                .font(.title2)
+                .font(.system(size: 14, weight: .semibold, design: .rounded))
                 .padding(.bottom, 25)
             WeekdayHeaderView()
             CalendarDaysView(
@@ -113,7 +113,7 @@ struct CalendarHorizontalPopup: View {
         HStack(alignment: .top, spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
                 Text(currentMonthYear)
-                    .font(.title2)
+                    .font(.system(.title2, design: .rounded, weight: .regular))
                     .padding(.bottom, 25)
                     .fixedSize(horizontal: true, vertical: false)
                 WeekdayHeaderView()
@@ -210,9 +210,10 @@ private struct WeekdayHeaderView: View {
                 let isWeekend = calendar.isDateInWeekend(
                     referenceDays[originalIndex]
                 )
-                let color = isWeekend ? Color.gray : Color.white
+                let color = isWeekend ? Color.red : Color.white
 
                 Text(reordered[i])
+                    .font(.system(.subheadline, design: .rounded, weight: .medium))
                     .frame(width: 30)
                     .foregroundColor(color)
             }
@@ -244,7 +245,7 @@ private struct CalendarDaysView: View {
                             let color =
                                 isToday(day: day)
                                 ? Color.black
-                                : (isWeekend ? Color.gray : Color.white)
+                            : (isWeekend ? Color.red.opacity(0.6) : Color.white)
 
                             ZStack {
                                 if isToday(day: day) {
@@ -255,6 +256,7 @@ private struct CalendarDaysView: View {
                                 Text("\(day)")
                                     .foregroundColor(color)
                                     .frame(width: 30, height: 30)
+                                    .font(.system(.caption, design: .rounded, weight: .regular))
                             }
                         } else {
                             Color.clear.frame(width: 30, height: 30)
@@ -303,7 +305,7 @@ private struct EventListView: View {
         if !events.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
-                    .font(.subheadline)
+                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
                     .foregroundStyle(.gray)
                 ForEach(events, id: \.eventIdentifier) { event in
                     EventRow(event: event)
@@ -325,10 +327,10 @@ private struct EventRow: View {
                 .clipShape(Capsule())
             VStack(alignment: .leading) {
                 Text(event.title)
-                    .font(.headline)
+                    .font(.system(.headline, design: .rounded, weight: .medium))
                     .lineLimit(1)
                 Text(eventTime)
-                    .font(.caption)
+                    .font(.system(.caption, design: .rounded, weight: .regular))
                     .fontWeight(.regular)
                     .lineLimit(1)
             }

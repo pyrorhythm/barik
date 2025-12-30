@@ -10,7 +10,7 @@ struct AudioOutputPopup: View {
             VStack(spacing: 8) {
                 HStack(spacing: 12) {
                     Image(systemName: audioManager.isMuted ? "speaker.slash.fill" : volumeIcon)
-                        .font(.system(size: 14))
+                        .font(.system(size: 14, weight: .heavy, design: .rounded))
                         .foregroundColor(.white.opacity(0.8))
                         .frame(width: 20)
                         .onTapGesture {
@@ -28,7 +28,7 @@ struct AudioOutputPopup: View {
                     }
 
                     Text("\(Int(localVolume * 100))%")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
                         .foregroundColor(.white.opacity(0.6))
                         .frame(width: 36, alignment: .trailing)
                 }
@@ -41,7 +41,7 @@ struct AudioOutputPopup: View {
             // Output devices section
             VStack(alignment: .leading, spacing: 4) {
                 Text("Output")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
                     .foregroundColor(.white.opacity(0.5))
                     .padding(.horizontal, 4)
 
@@ -84,12 +84,12 @@ private struct DeviceRow: View {
         Button(action: onSelect) {
             HStack(spacing: 10) {
                 Image(systemName: device.icon)
-                    .font(.system(size: 14))
+                    .font(.system(size: 14, weight: .semibold, design: .rounded))
                     .foregroundColor(.white.opacity(0.8))
                     .frame(width: 20)
 
                 Text(device.name)
-                    .font(.system(size: 13))
+                    .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundColor(.white)
                     .lineLimit(1)
 
@@ -97,7 +97,7 @@ private struct DeviceRow: View {
 
                 if isSelected {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: 12, weight: .semibold, design: .rounded ))
                         .foregroundColor(.white)
                 }
             }

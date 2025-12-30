@@ -32,11 +32,11 @@ struct MenuBarPopupView<Content: View>: View {
     var body: some View {
         ZStack(alignment: .topTrailing) {
             content
-                .glassEffect(in: .rect(cornerRadius: 40, style: .continuous))
-                .padding(.top, foregroundHeight + 5)
-                .offset(x: computedOffset, y: computedYOffset)
                 .blur(radius: (1.0 - (0.1 + 0.9 * animationValue)) * 20)
                 .scaleEffect(x: 0.2 + 0.8 * animationValue, y: animationValue)
+                .padding(.horizontal, 16)
+                .glassEffect(.regular, in: .rect(cornerRadius: 40))
+                .offset(x: computedOffset, y: computedYOffset)
                 .opacity(animationValue)
                 .transaction { transaction in
                     if isHideAnimation {
@@ -113,7 +113,7 @@ struct MenuBarPopupView<Content: View>: View {
                     .smooth(duration: 0.3),
                     value: animated ? 0 : computedYOffset
                 )
-        }
+        }.padding(.top, foregroundHeight)
         .background(
             GeometryReader { geometry in
                 Color.clear

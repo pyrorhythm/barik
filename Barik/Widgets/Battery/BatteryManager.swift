@@ -20,11 +20,11 @@ class BatteryManager: ObservableObject {
     @Published var batteryLevel: Int = 0
     @Published var isCharging: Bool = false
     @Published var isPluggedIn: Bool = false
+    @Published var timeRemaining: Int? = nil
 
     private var runLoopSource: CFRunLoopSource?
 
     private init() {
-        // Register for IOKit power source change notifications
         let context = Unmanaged.passUnretained(self).toOpaque()
         if let loopSource = IOPSNotificationCreateRunLoopSource(
             powerSourceChangedCallback,
@@ -34,7 +34,7 @@ class BatteryManager: ObservableObject {
             CFRunLoopAddSource(CFRunLoopGetCurrent(), loopSource, .defaultMode)
         }
 
-        // Get initial battery state
+        
         updateBatteryStatus()
     }
 
@@ -67,10 +67,17 @@ class BatteryManager: ObservableObject {
             {
                 let isAC = (powerSourceState == kIOPSACPowerValue)
 
+                // Get time remaining (in minutes)
+                let timeKey = charging ? kIOPSTimeToFullChargeKey : kIOPSTimeToEmptyKey
+                let time = description[timeKey as String] as? Int
+                // IOKit returns -1 if time is calculating/unknown
+                let validTime = (time != nil && time! > 0) ? time : nil
+
                 DispatchQueue.main.async {
                     self.batteryLevel = (currentCapacity * 100) / maxCapacity
                     self.isCharging = charging
                     self.isPluggedIn = isAC
+                    self.timeRemaining = validTime
                 }
             }
         }

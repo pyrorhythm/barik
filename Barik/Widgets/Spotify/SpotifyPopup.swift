@@ -81,18 +81,14 @@ private struct SpotifyVerticalPopup: View {
                 VStack(alignment: .center) {
                     Text(track.title)
                         .multilineTextAlignment(.center)
-                        .font(.system(size: 15))
-                        .fontWeight(.medium)
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        
                     Text(track.artist)
                         .opacity(0.6)
-                        .font(.system(size: 15))
-                        .fontWeight(.light)
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        
                 }
-
-                // Progress bar
                 SpotifyProgressBar(track: track)
-
-                // Playback controls
                 SpotifyPlaybackControls()
             }
             .frame(width: 250)
@@ -140,11 +136,10 @@ private struct SpotifyHorizontalPopup: View {
                     // Track info
                     VStack(alignment: .leading, spacing: 2) {
                         Text(track.title)
-                            .font(.system(size: 13))
-                            .fontWeight(.medium)
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
                             .lineLimit(1)
                         Text(track.artist)
-                            .font(.system(size: 12))
+                            .font(.system(size: 12, weight: .medium, design: .rounded))
                             .opacity(0.6)
                             .lineLimit(1)
                     }
@@ -181,7 +176,7 @@ private struct SpotifyProgressBar: View {
                         .frame(height: 4)
 
                     Rectangle()
-                        .fill(Color(red: 0.11, green: 0.73, blue: 0.33))
+                        .fill(Color.accentColor)
                         .frame(width: geometry.size.width * (track.position / max(track.duration, 1)), height: 4)
                 }
                 .clipShape(Capsule())
@@ -199,12 +194,12 @@ private struct SpotifyProgressBar: View {
 
             HStack {
                 Text(formatTime(track.position))
-                    .font(.system(size: 11))
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
                     .monospacedDigit()
                     .opacity(0.6)
                 Spacer()
                 Text(formatTime(track.duration))
-                    .font(.system(size: 11))
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
                     .monospacedDigit()
                     .opacity(0.6)
             }
@@ -229,7 +224,7 @@ private struct SpotifyPlaybackControls: View {
                 spotifyManager.previousTrack()
             }) {
                 Image(systemName: "backward.fill")
-                    .font(.system(size: 18))
+                    .font(.system(size: 18, weight: .semibold, design: .rounded))
             }
             .buttonStyle(ScaleButtonStyle())
 
@@ -237,7 +232,7 @@ private struct SpotifyPlaybackControls: View {
                 spotifyManager.togglePlayPause()
             }) {
                 Image(systemName: spotifyManager.currentTrack?.state == .playing ? "pause.fill" : "play.fill")
-                    .font(.system(size: 22))
+                    .font(.system(size: 22, weight: .semibold, design: .rounded))
             }
             .buttonStyle(ScaleButtonStyle())
 
@@ -245,7 +240,7 @@ private struct SpotifyPlaybackControls: View {
                 spotifyManager.nextTrack()
             }) {
                 Image(systemName: "forward.fill")
-                    .font(.system(size: 18))
+                    .font(.system(size: 18, weight: .semibold, design: .rounded))
             }
             .buttonStyle(ScaleButtonStyle())
         }
@@ -260,16 +255,16 @@ private struct SpotifyNotPlayingView: View {
     var body: some View {
         VStack(spacing: 12) {
             Image(systemName: spotifyManager.isSpotifyRunning ? "pause.circle" : "music.note")
-                .font(.system(size: 40))
+                .font(.system(size: 40, weight: .regular, design: .rounded))
                 .foregroundColor(.gray.opacity(0.5))
 
             Text(spotifyManager.isSpotifyRunning ? "Not Playing" : "Spotify Not Running")
-                .font(.system(size: 14))
+                .font(.system(size: 14, weight: .bold, design: .rounded))
                 .opacity(0.6)
 
             if !spotifyManager.isSpotifyRunning {
                 Text("Open Spotify to see playback controls")
-                    .font(.system(size: 12))
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
                     .opacity(0.4)
                     .multilineTextAlignment(.center)
             }
@@ -277,3 +272,72 @@ private struct SpotifyNotPlayingView: View {
         .padding(30)
     }
 }
+
+// MARK: - Previews
+
+struct SpotifyPopup_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            // Vertical variant with playing track
+            SpotifyVerticalPopup()
+                .previewDisplayName("Vertical - Playing")
+                .background(Color(NSColor.windowBackgroundColor))
+                .previewLayout(.sizeThatFits)
+            
+            // Horizontal variant with playing track
+            SpotifyHorizontalPopup()
+                .previewDisplayName("Horizontal - Playing")
+                .background(Color(NSColor.windowBackgroundColor))
+                .previewLayout(.sizeThatFits)
+            
+            // Not playing view
+            SpotifyNotPlayingView()
+                .previewDisplayName("Not Playing")
+                .background(Color(NSColor.windowBackgroundColor))
+                .previewLayout(.sizeThatFits)
+            
+            // Progress bar component
+            VStack {
+                SpotifyProgressBar(
+                    track: SpotifyTrack(
+                        trackId: "Lol",
+                        title: "Sample Track",
+                        artist: "Sample Artist",
+                        album: "Sample Album",
+                        artworkURL: nil,
+                        duration: 240,
+                        position: 120,
+                        state: .playing
+                    )
+                )
+                .padding()
+                
+                SpotifyProgressBar(
+                    track: SpotifyTrack(
+                        trackId: "lol",
+                        title: "Sample Track",
+                        artist: "Sample Artist",
+                        album: "Sample Album",
+                        artworkURL: nil,
+                        duration: 240,
+                        position: 60,
+                        state: .playing
+                    )
+                )
+                .padding()
+            }
+            .frame(width: 250)
+            .previewDisplayName("Progress Bar States")
+            .background(Color(NSColor.windowBackgroundColor))
+            .previewLayout(.sizeThatFits)
+            
+            // Playback controls
+            SpotifyPlaybackControls()
+                .previewDisplayName("Playback Controls")
+                .padding()
+                .background(Color(NSColor.windowBackgroundColor))
+                .previewLayout(.sizeThatFits)
+        }
+    }
+}
+

@@ -42,7 +42,7 @@ struct SpotifyWidget: View {
                 
             }
         }
-        
+        .experimentalConfiguration(cornerRadius: 15)
         .background(
             GeometryReader { geometry in
                 Color.clear
@@ -191,6 +191,9 @@ private struct SpotifyAlbumArtContent: View, Equatable {
             }
         }
         .animation(.smooth(duration: 0.1), value: isPaused)
+        .transaction { transaction in
+            transaction.animation = .interpolatingSpring
+        }
     }
 }
 
@@ -209,7 +212,7 @@ struct SpotifySongTextView: View {
                 .padding(.trailing, 2)
         }
         .transaction { transaction in
-            transaction.animation = nil
+            transaction.animation = .interpolatingSpring
         }
     }
 }

@@ -14,10 +14,12 @@ private struct ExperimentalConfigurationModifier: ViewModifier {
             case .widgetPills:
                 VStack {
                     Spacer().frame(height: configManager.config.experimental.foreground.verticalPadding)
+                    
                     content
                         .frame(height: foregroundHeight)
-                        .padding(.horizontal, 10)
-                        .glassEffect(.clear.interactive())
+                        .padding(.horizontal, horizontalPadding)
+                        .glassEffect(.regular)
+                    
                     Spacer().frame(height: configManager.config.experimental.foreground.verticalPadding)
                 }
 

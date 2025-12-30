@@ -74,7 +74,6 @@ struct MenuBarView: View {
         let pillHeight = configManager.config.experimental.foreground.resolveHeight()
         let verticalPadding = configManager.config.experimental.foreground.verticalPadding
         
-        // Left pill
         VStack {
             Spacer().frame(height: verticalPadding)
             HStack(spacing: configManager.config.experimental.foreground.spacing) {
@@ -88,7 +87,6 @@ struct MenuBarView: View {
             Spacer().frame(height: verticalPadding)
         }
 
-        // Spacer in the middle (notch area)
         let minWidth = max(50, displayManager.notchSpacerWidth)
         Spacer().frame(minWidth: minWidth, maxWidth: .infinity)
 

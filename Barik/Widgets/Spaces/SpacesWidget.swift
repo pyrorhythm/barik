@@ -2,30 +2,104 @@ import SwiftUI
 
 struct SpacesWidget: View {
     @StateObject var viewModel = SpacesViewModel()
-
+    @Namespace private var ns
     @ObservedObject var configManager = ConfigManager.shared
     var foregroundHeight: CGFloat { configManager.config.experimental.foreground.resolveHeight() }
-
+    var layoutStyle: BackgroundStyle { configManager.config.experimental.background.style }
+    
     var body: some View {
-        HStack(spacing: foregroundHeight < 30 ? 0 : 4) {
-            ForEach(viewModel.spaces.indices, id: \.self) { idx in
-                SpaceView(space: viewModel.spaces[idx])
-                
-                if idx != viewModel.spaces.count - 1 {
-                    Rectangle()
-                        .fill(Color.foregroundOutside.opacity(0.5))
-                        .frame(width: 3, height: 10)
-                        .clipShape(Capsule())
-                        .glow(color: .white.opacity(0.10), radius: 3)
-                }
-            }
+        let focusedIndex = viewModel.spaces.firstIndex { space in
+            space.windows.contains { $0.isFocused } || space.isFocused
         }
-        .experimentalConfiguration(horizontalPadding: 5, cornerRadius: 10)
-        .animation(.smooth(duration: 0.15), value: viewModel.spaces)
-        .environmentObject(viewModel)
-    }
-}
+        
+        let beforeFocused = focusedIndex.map { Array(viewModel.spaces[..<$0]) } ?? []
+        let focused = focusedIndex.map { [viewModel.spaces[$0]] } ?? []
+        let afterFocused = focusedIndex.map { Array(viewModel.spaces[($0 + 1)...]) } ?? viewModel.spaces
+        
+        
+        GlassEffectContainer(spacing: 8) {
+            HStack(spacing: 8) {
+                if !beforeFocused.isEmpty {
+                    var stack = HStack(spacing: foregroundHeight < 30 ? 0 : 4) {
+                        ForEach(beforeFocused.indices, id: \.self) { idx in
+                            SpaceView(space: beforeFocused[idx])
+                                .glassEffectID("space-\(beforeFocused[idx].id)", in: ns)
 
+                            if layoutStyle == .widgetPills && idx != beforeFocused.count - 1 {
+                                Rectangle()
+                                    .fill(Color.foregroundOutside.opacity(0.5))
+                                    .frame(width: 2, height: 12)
+                                    .clipShape(Capsule())
+                                    .glassEffect(.clear)
+                            }
+                        }
+                    }
+                    if layoutStyle == .widgetPills {
+                        stack
+                            .glassEffect(.regular)
+                            .glassEffectID("group-before", in: ns)
+                    } else {
+                        stack
+                            .opacity(0.67)
+                            .transition(.blurReplace)
+                    }
+                    
+                }
+
+                if !focused.isEmpty {
+                    var stack = HStack(spacing: foregroundHeight < 30 ? 0 : 4) {
+                        ForEach(focused) { space in
+                            SpaceView(space: space)
+                                .glassEffectID("space-\(space.id)", in: ns)
+                        }
+                    }
+                    
+                    if layoutStyle == .widgetPills {
+                        stack
+                            .glassEffect(.clear)
+                            .glassEffectID("group-focused", in: ns)
+                    } else {
+                        stack
+                            .transition(.blurReplace)
+                    }
+                }
+
+                if !afterFocused.isEmpty {
+                    var stack = HStack(spacing: foregroundHeight < 30 ? 0 : 4) {
+                        ForEach(afterFocused.indices, id: \.self) { idx in
+                            SpaceView(space: afterFocused[idx])
+                                .glassEffectID("space-\(afterFocused[idx].id)", in: ns)
+                            
+                            if layoutStyle == .widgetPills && idx != afterFocused.count - 1 {
+                                Rectangle()
+                                    .fill(Color.foregroundOutside.opacity(0.5))
+                                    .frame(width: 2, height: 12)
+                                    .clipShape(Capsule())
+                            }
+                        }
+                    }
+                    
+                    if layoutStyle == .widgetPills {
+                        stack
+                            .glassEffect(.regular)
+                            .glassEffectID("group-after", in: ns)
+                    } else {
+                        stack
+                            .transition(.blurReplace)
+                            .opacity(0.67)
+                    }
+                }
+
+            }
+            .animation(.interpolatingSpring(duration: 0.5), value: focusedIndex)
+            .environmentObject(viewModel)
+        }
+    }
+    
+    
+}
+    
+        
 /// This view shows a space with its windows.
 private struct SpaceView: View {
     @EnvironmentObject var configProvider: ConfigProvider
@@ -49,14 +123,18 @@ private struct SpaceView: View {
             Spacer().frame(width: 6)
             if showKey {
                 Text(space.id)
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .font(.system(size: 13, weight: isFocused ? .heavy : .medium, design: .rounded))
                     .frame(minWidth: 15)
                     .fixedSize(horizontal: true, vertical: false)
-                Spacer().frame(width: 4)
+                
+                if space.windows.count != 0 {
+                    Spacer().frame(width: 4)
+                }
             }
             HStack(spacing: 2) {
                 ForEach(space.windows) { window in
                     WindowView(window: window, space: space)
+                        .opacity(isFocused ? 1 : 0.7)
                 }
             }
             Spacer().frame(width: 6)
@@ -124,7 +202,8 @@ private struct WindowView: View {
                         .frame(width: size, height: size)
                 }
             }
-            .opacity(spaceIsFocused && !window.isFocused ? 0.5 : 1)
+            .opacity(spaceIsFocused && !window.isFocused ? 0.75 : 1)
+            .glow(color: .white.opacity(!spaceIsFocused || (spaceIsFocused && !window.isFocused) ? 0 : 0.09), radius: 11)
             .transition(.blurReplace)
 
             if window.isFocused, !title.isEmpty, effectiveShowTitle {

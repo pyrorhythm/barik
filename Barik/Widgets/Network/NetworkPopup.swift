@@ -25,7 +25,7 @@ struct NetworkPopup: View {
                         Text("Noise: \(viewModel.noise)")
                         Text("Channel: \(viewModel.channel)")
                     }
-                    .font(.subheadline)
+                    .font(.system(size: 13, weight: .medium, design: .rounded))
                 }
             }
 
@@ -40,7 +40,7 @@ struct NetworkPopup: View {
             }
         }
         .padding(25)
-        .background(Color.black)
+        .fontDesign(.rounded)
     }
 
     /// Chooses the Wi‑Fi icon based on the status and connection availability.

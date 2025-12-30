@@ -8,13 +8,20 @@ struct SpacesWidget: View {
 
     var body: some View {
         HStack(spacing: foregroundHeight < 30 ? 0 : 4) {
-            ForEach(viewModel.spaces) { space in
-                SpaceView(space: space)
+            ForEach(viewModel.spaces.indices, id: \.self) { idx in
+                SpaceView(space: viewModel.spaces[idx])
+                
+                if idx != viewModel.spaces.count - 1 {
+                    Rectangle()
+                        .fill(Color.foregroundOutside.opacity(0.5))
+                        .frame(width: 3, height: 10)
+                        .clipShape(Capsule())
+                        .glow(color: .white.opacity(0.10), radius: 3)
+                }
             }
         }
         .experimentalConfiguration(horizontalPadding: 5, cornerRadius: 10)
         .animation(.smooth(duration: 0.15), value: viewModel.spaces)
-        .foregroundStyle(Color.foreground)
         .environmentObject(viewModel)
     }
 }
@@ -42,7 +49,7 @@ private struct SpaceView: View {
             Spacer().frame(width: 6)
             if showKey {
                 Text(space.id)
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.system(size: 13, weight: .medium, design: .rounded))
                     .frame(minWidth: 15)
                     .fixedSize(horizontal: true, vertical: false)
                 Spacer().frame(width: 4)
@@ -55,8 +62,7 @@ private struct SpaceView: View {
             Spacer().frame(width: 6)
         }
         .frame(height: 30)
-        .glassEffect(in: .rect(cornerRadius: 8, style: .continuous))
-        .tint(isFocused ? .accentColor : nil)
+        .padding(.all, 2)
         .transition(.blurReplace)
         .onTapGesture {
             viewModel.switchToSpace(space, needWindowFocus: true)
@@ -136,12 +142,9 @@ private struct WindowView: View {
                 .transition(.blurReplace)
             }
         }
-        .padding(.all, 2)
-        .background(isHovered || (!effectiveShowTitle && window.isFocused) ? .selected : .clear)
-        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .animation(.smooth, value: isHovered)
         .frame(height: 30)
-        .contentShape(Rectangle())
+        .glow(color: .white.opacity((isHovered || window.isFocused) ? 0.15 : 0.07), radius: 3)
         .onTapGesture {
             viewModel.switchToSpace(space)
             usleep(100_000)
@@ -150,5 +153,15 @@ private struct WindowView: View {
         .onHover { value in
             isHovered = value
         }
+    }
+}
+
+
+struct SpacesWidget_Preview: PreviewProvider {
+    static var previews: some View {
+        ZStack {
+            SpacesWidget()
+        }.frame(width: 400, height: 100)
+            .environmentObject(ConfigProvider(config: [:]))
     }
 }

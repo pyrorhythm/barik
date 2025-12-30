@@ -9,7 +9,7 @@ struct AudioOutputWidget: View {
     var body: some View {
         HStack(spacing: 4) {
             Image(systemName: currentIcon)
-                .font(.system(size: 14))
+                .font(.system(size: 14, weight: .semibold, design: .rounded))
                 .foregroundStyle(.foregroundOutside)
         }
         .experimentalConfiguration(cornerRadius: 15)

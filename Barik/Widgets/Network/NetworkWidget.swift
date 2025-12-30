@@ -14,7 +14,7 @@ struct NetworkWidget: View {
                 ethernetIcon
             }
         }
-        .font(.system(size: 14))
+        .font(.system(size: 14, weight: .black, design: .rounded))
         .contentShape(Rectangle())
         .experimentalConfiguration(cornerRadius: 15)
         .frame(maxHeight: .infinity)

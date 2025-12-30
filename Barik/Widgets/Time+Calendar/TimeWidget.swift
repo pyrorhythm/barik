@@ -6,7 +6,10 @@ struct TimeWidget: View {
     var config: ConfigData { configProvider.config }
     var calendarConfig: ConfigData? { config["calendar"]?.dictionaryValue }
 
-    var format: String { config["format"]?.stringValue ?? "E d, J:mm" }
+    var format: String { "E d, J:mm" }
+    var datePart: String { "E d" }
+    var timePart: String { "J:mm" }
+    
     var timeZone: String? { config["time-zone"]?.stringValue }
     var label: String? { config["label"]?.stringValue }
 
@@ -31,13 +34,18 @@ struct TimeWidget: View {
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
-            HStack(spacing: 4) {
+            HStack() {
                 if let label = label {
                     Text(label)
                         .opacity(0.6)
                 }
-                Text(formattedTime(pattern: format, from: currentTime))
-                    .fontWeight(.medium)
+                Text(formattedTime(pattern: datePart, from: currentTime) + ",")
+                    .fontWeight(.heavy)
+                
+                
+                Text(formattedTime(pattern: timePart, from: currentTime))
+                    .fontWeight(.semibold)
+                    .offset(x: -2)
             }
             if let event = calendarManager.nextEvent, calendarShowEvents {
                 Text(eventText(for: event))
@@ -45,7 +53,7 @@ struct TimeWidget: View {
                     .font(.subheadline)
             }
         }
-        .font(.system(size: 13))
+        .font(.system(size: 13, design: .rounded))
         .foregroundStyle(.foregroundOutside)
         .shadow(color: .foregroundShadowOutside, radius: 3)
         .onReceive(timer) { date in
@@ -113,6 +121,6 @@ struct TimeWidget_Previews: PreviewProvider {
         ZStack {
             TimeWidget(calendarManager: manager)
                 .environmentObject(provider)
-        }.frame(width: 500, height: 100)
+        }.frame(width: 150, height: 60)
     }
 }

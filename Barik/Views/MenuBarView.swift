@@ -84,7 +84,7 @@ struct MenuBarView: View {
             }
             .frame(height: pillHeight)
             .padding(.horizontal, 12)
-            .glassEffect(in: .rect(cornerRadius: 18, style: .continuous))
+            .glassEffect(.clear.interactive())
             Spacer().frame(height: verticalPadding)
         }
 
@@ -102,7 +102,7 @@ struct MenuBarView: View {
             }
             .frame(height: pillHeight)
             .padding(.horizontal, 12)
-            .glassEffect(in: .rect(cornerRadius: 18, style: .continuous))
+            .glassEffect(.clear.interactive())
             Spacer().frame(height: verticalPadding)
         }
     }
@@ -157,8 +157,9 @@ struct MenuBarView: View {
         case "divider":
             Rectangle()
                 .fill(Color.foregroundOutside.opacity(0.5))
-                .frame(width: 2, height: 15)
+                .frame(width: 3, height: 15)
                 .clipShape(Capsule())
+                .glow(color: .white.opacity(0.15), radius: 3)
 
         case "system-banner":
             SystemBannerWidget()

@@ -4,9 +4,9 @@ import SwiftUI
 struct SystemWidget: View {
     var body: some View {
         Image(systemName: "apple.logo")
-            .font(.system(size: 15))
+            .font(.system(size: 15, design: .rounded))
             .foregroundStyle(.foregroundOutside)
-            .shadow(color: .foregroundShadowOutside, radius: 3)
+            .glow(color: .white.opacity(0.1), radius: 3)
             .offset(y: -1)
             .contentShape(Rectangle())
             .experimentalConfiguration(cornerRadius: 15)

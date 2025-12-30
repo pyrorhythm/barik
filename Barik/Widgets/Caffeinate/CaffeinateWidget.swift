@@ -8,10 +8,10 @@ struct CaffeinateWidget: View {
 
     var body: some View {
         Image(systemName: "cup.and.saucer.fill")
-            .font(.system(size: 14))
+            .font(.system(size: 14, weight: .semibold, design: .rounded))
             .foregroundStyle(.foregroundOutside)
             .opacity(manager.isActive ? 1.0 : 0.5)
-            .shadow(color: .foregroundShadowOutside, radius: 3)
+            .glow(color: .white.opacity(0.1), radius: 3)
             .experimentalConfiguration(cornerRadius: 15)
             .frame(maxHeight: .infinity)
             .background(.black.opacity(0.001))

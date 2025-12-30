@@ -23,24 +23,26 @@ struct SpotifyWidget: View {
                     }
                 }
                 .hidden()
-
-                // Visible content with animated width
                 VisibleSpotifyContent(track: track, width: animatedWidth)
+                    
                     .onTapGesture {
                         MenuBarPopup.show(rect: widgetFrame, id: "spotify") {
                             SpotifyPopup(configProvider: configProvider)
                         }
                     }
+                
             } else if spotifyManager.isSpotifyRunning {
-                // Spotify is running but not playing
                 SpotifyIdleView()
+                    
                     .onTapGesture {
                         MenuBarPopup.show(rect: widgetFrame, id: "spotify") {
                             SpotifyPopup(configProvider: configProvider)
                         }
                     }
+                
             }
         }
+        
         .background(
             GeometryReader { geometry in
                 Color.clear
@@ -52,6 +54,7 @@ struct SpotifyWidget: View {
                     }
             }
         )
+        
     }
 }
 
@@ -71,13 +74,8 @@ struct SpotifyIdleView: View {
                 .font(.system(size: 11))
                 .foregroundColor(.foreground.opacity(0.6))
         }
-        .padding(.horizontal, foregroundHeight < 45 ? 8 : 12)
-        .frame(height: foregroundHeight < 45 ? 30 : 38)
-        .background(configManager.config.experimental.foreground.widgetsBackground.blur)
-        .clipShape(Capsule())
-        .overlay(
-            Capsule().stroke(Color.noActive, lineWidth: 1)
-        )
+        .frame(height: foregroundHeight < 45 ? 33 : 38)
+        .padding(.vertical, 2)
     }
 }
 
@@ -89,18 +87,14 @@ struct SpotifyContent: View {
     var foregroundHeight: CGFloat { configManager.config.experimental.foreground.resolveHeight() }
 
     var body: some View {
-        HStack(spacing: 8) {
-            SpotifyAlbumArtView(track: track)
+        HStack() {
+            SpotifyAlbumArtView(track: track).glow(color: .white.opacity(0.3), radius: 5)
             SpotifySongTextView(track: track)
         }
-        .padding(.horizontal, foregroundHeight < 45 ? 8 : 12)
-        .frame(height: foregroundHeight < 45 ? 30 : 38)
-        .background(configManager.config.experimental.foreground.widgetsBackground.blur)
-        .clipShape(Capsule())
-        .overlay(
-            Capsule().stroke(Color.noActive, lineWidth: 1)
-        )
-        .foregroundColor(.foreground)
+        
+        .frame(height: foregroundHeight < 45 ? 33 : 38)
+        .padding(.vertical, 2)
+        
     }
 }
 
@@ -209,20 +203,22 @@ struct SpotifySongTextView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: -1) {
-            if foregroundHeight >= 30 {
-                ScrollingText(text: track.title, font: .system(size: 11), fontWeight: .medium)
-                    .padding(.trailing, 2)
-                ScrollingText(text: track.artist, font: .system(size: 10), opacity: 0.8)
-                    .padding(.trailing, 2)
-            } else {
-                ScrollingText(
-                    text: track.artist + " — " + track.title,
-                    font: .system(size: 12)
-                )
-            }
+            ScrollingText(text: track.title, font: .system(size: 11, design: .rounded), fontWeight: .heavy)
+                .padding(.trailing, 2)
+            ScrollingText(text: track.artist, font: .system(size: 10, design: .rounded), fontWeight: .semibold, opacity: 0.8)
+                .padding(.trailing, 2)
         }
         .transaction { transaction in
             transaction.animation = nil
         }
+    }
+}
+
+struct SpotifyContent_Preview: PreviewProvider {
+    static var previews: some View {
+        ZStack {
+            SpotifyContent(track: SpotifyTrack(trackId: "123123", title: "123123", artist: "123123", album: "123123", artworkURL: nil, duration: 123123.213, position: 12312.123, state: .playing))
+        }.frame(width: 200, height: 100)
+            .environmentObject(ConfigProvider(config: [:]))
     }
 }

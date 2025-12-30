@@ -17,7 +17,7 @@ private struct ExperimentalConfigurationModifier: ViewModifier {
                     content
                         .frame(height: foregroundHeight)
                         .padding(.horizontal, 10)
-                        .glassEffect(in: .rect(cornerRadius: cornerRadius, style: .continuous))
+                        .glassEffect(.clear.interactive())
                     Spacer().frame(height: configManager.config.experimental.foreground.verticalPadding)
                 }
 
@@ -37,5 +37,14 @@ extension View {
             horizontalPadding: horizontalPadding,
             cornerRadius: cornerRadius
         ))
+    }
+}
+
+extension View {
+    func glow(color: Color = .red, radius: CGFloat = 20) -> some View {
+        self
+            .shadow(color: color, radius: radius / 3)
+            .shadow(color: color, radius: radius / 3)
+            .shadow(color: color, radius: radius / 3)
     }
 }
